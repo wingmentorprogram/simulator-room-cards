@@ -76,22 +76,19 @@ const App: React.FC = () => {
     const offset = index - mid;
     
     // Inward Curve (Concave Screen Effect)
-    // Rotation: 
-    // Left items (negative offset) rotate positive (clockwise) to face center
-    // Right items (positive offset) rotate negative (counter-clockwise) to face center
-    const rotateY = offset * -10; 
+    const rotateY = offset * -8; 
     
     // Z-Depth: 
     // In a concave screen, the edges are closer to the viewer (positive Z) than the center.
-    const translateZ = Math.abs(offset) * 40; 
+    const translateZ = Math.abs(offset) * 30; 
     
     // X-Translation: 
     // Spread them out horizontally relative to center
-    const translateX = offset * 320;
+    const translateX = offset * 310;
 
     return {
       transform: `perspective(1000px) translate3d(${translateX}px, 0, ${translateZ}px) rotateY(${rotateY}deg)`,
-      zIndex: Math.floor(Math.abs(offset)),
+      zIndex: 10 - Math.floor(Math.abs(offset)), // Ensure center is on top if overlap
     };
   };
 
@@ -101,7 +98,7 @@ const App: React.FC = () => {
       {/* Smoke Shader Background */}
       <SmokeBackground />
 
-      {/* Header - relative layout ensures it pushes the main content down and isn't obscured */}
+      {/* Header */}
       <header className="relative z-30 pt-8 pb-4 w-full text-center shrink-0">
         <h1 className="text-3xl md:text-5xl font-serif tracking-tight text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
           The Simulator Room
@@ -111,13 +108,13 @@ const App: React.FC = () => {
         </p>
       </header>
 
-      {/* Main Display Area - Flex 1 fills the remaining vertical space */}
+      {/* Main Display Area */}
       <main className="relative z-10 flex-1 w-full flex items-center justify-center perspective-[2000px]">
         {CARDS.map((card, index) => (
           <div 
             key={card.id}
-            // Absolute positioning centers all cards within the main container
-            className="absolute transition-all duration-700 ease-out preserve-3d top-1/2 left-1/2 -ml-[140px] -mt-[210px]" 
+            // Adjusted -mt to -240px to shift cards up slightly, allowing space for text below
+            className="absolute transition-all duration-700 ease-out preserve-3d top-1/2 left-1/2 -ml-[140px] -mt-[240px]" 
             style={getTransformStyle(index)}
           >
             <Card 
@@ -130,25 +127,22 @@ const App: React.FC = () => {
         ))}
       </main>
 
-      {/* Description Area - Fixed height footer */}
-      <footer className="relative z-20 h-[25vh] w-full shrink-0 pointer-events-none flex flex-col justify-start items-center pt-4 md:pt-8 transition-all duration-500">
+      {/* Description Footer */}
+      <footer className="relative z-20 h-[20vh] min-h-[140px] w-full shrink-0 pointer-events-none flex flex-col justify-center items-center pb-8 transition-all duration-500">
         {hoveredCard ? (
           <div className="animate-slide-up flex flex-col items-center text-center px-4 max-w-2xl">
-            <h2 className="text-3xl font-serif tracking-[0.2em] uppercase font-medium text-white drop-shadow-lg mb-4">
+            <h2 className="text-2xl font-serif tracking-[0.15em] uppercase font-medium text-white drop-shadow-lg mb-3">
               {hoveredCard.title}
             </h2>
-            <div className="w-16 h-[1px] bg-white/40 mb-4" />
-            <p className="text-zinc-200 text-lg font-light leading-relaxed mb-2 drop-shadow-md">
+            <div className="w-12 h-[1px] bg-white/40 mb-3" />
+            <p className="text-zinc-300 text-sm md:text-base font-light leading-relaxed drop-shadow-md max-w-lg">
               {hoveredCard.description}
-            </p>
-            <p className="text-zinc-500 text-xs font-mono tracking-widest uppercase mt-2">
-              {hoveredCard.promptContext}
             </p>
           </div>
         ) : (
-          <div className="flex flex-col items-center opacity-50">
+          <div className="flex flex-col items-center opacity-40">
             <div className="w-1 h-8 bg-zinc-700 mb-4 rounded-full" />
-            <p className="text-zinc-600 text-[10px] tracking-[0.3em] uppercase transition-opacity duration-500">
+            <p className="text-zinc-500 text-[10px] tracking-[0.3em] uppercase transition-opacity duration-500">
               Select a module to explore
             </p>
           </div>
