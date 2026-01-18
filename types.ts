@@ -6,6 +6,7 @@ export interface CardData {
   color?: string; // For solid colors
   promptContext: string; // Context for Gemini
   description: string; // Longer poetic description
+  externalUrl?: string; // URL for simulation/browser view
 }
 
 export interface GenerationResult {

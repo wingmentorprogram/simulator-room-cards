@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from './components/Card';
 import InfoModal from './components/InfoModal';
+import SimulationLauncher from './components/SimulationLauncher';
 import SmokeBackground from './components/SmokeBackground';
 import { CardData } from './types';
 import { generateCreativeDescription } from './services/geminiService';
 
-// Aviation themed data with specific image replacements
 const CARDS: CardData[] = [
   {
     id: '1',
@@ -30,12 +30,12 @@ const CARDS: CardData[] = [
     src: 'https://lh3.googleusercontent.com/d/1RbWNolLohmr4dX9FzSdzGLHNWPCWppob',
     promptContext: 'aerial view of mountains, clear blue sky, visual flight rules, freedom of flight, scenic landscape, aviation navigation',
     description: 'The pure freedom of visual flight. Soaring over breathtaking landscapes with the horizon as your primary guide.',
+    externalUrl: 'https://www.geo-fs.com/geofs.php?v=3.9'
   },
   {
     id: '4',
     title: 'EBT Workload Management',
     type: 'image',
-    // Updated with the user-provided image link
     src: 'https://lh3.googleusercontent.com/d/1QrldYBuGagHp8vRLsJ8EcNpwtwBW2ShL',
     promptContext: 'flight simulator cockpit, crew resource management, high workload aviation, complex scenario, pilot teamwork',
     description: 'Advanced scenario-based training. Enhancing resilience and decision-making through complex, evidence-based simulation.',
@@ -44,6 +44,7 @@ const CARDS: CardData[] = [
 
 const App: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [launcherOpen, setLauncherOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
   const [hoveredCard, setHoveredCard] = useState<CardData | null>(null);
   const [aiContent, setAiContent] = useState<string>('');
@@ -51,6 +52,13 @@ const App: React.FC = () => {
 
   const handleCardClick = async (card: CardData) => {
     setSelectedCard(card);
+    
+    // Special handling for VFR card to bypass iframe blocks and open in a "chromeless" window
+    if (card.id === '3' && card.externalUrl) {
+      setLauncherOpen(true);
+      return;
+    }
+
     setModalOpen(true);
     setLoading(true);
     setAiContent('');
@@ -65,12 +73,15 @@ const App: React.FC = () => {
     setTimeout(() => setSelectedCard(null), 300);
   };
 
+  const closeLauncher = () => {
+    setLauncherOpen(false);
+    setTimeout(() => setSelectedCard(null), 300);
+  };
+
   const getTransformStyle = (index: number) => {
     const total = CARDS.length;
     const mid = (total - 1) / 2;
     const offset = index - mid;
-    
-    // Concave 3D fan layout
     const rotateY = offset * -10; 
     const translateZ = Math.abs(offset) * 40; 
     const translateX = offset * 320;
@@ -86,7 +97,6 @@ const App: React.FC = () => {
       
       <SmokeBackground />
 
-      {/* Header Section */}
       <header className="relative z-30 pt-10 pb-4 w-full text-center shrink-0">
         <h1 className="text-4xl md:text-6xl font-serif font-bold tracking-tighter text-white drop-shadow-[0_4px_12px_rgba(0,0,0,1)]">
           The Simulator Room
@@ -100,7 +110,6 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Interactive Cards Display */}
       <main className="relative z-10 flex-1 w-full flex items-center justify-center perspective-[2500px]">
         <div className="relative w-full h-full flex items-center justify-center">
           {CARDS.map((card, index) => (
@@ -120,7 +129,6 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Dynamic Status/Instruction Footer */}
       <footer className="relative z-20 h-[18vh] min-h-[120px] w-full shrink-0 flex flex-col justify-center items-center pb-10">
         <div className="transition-all duration-700 ease-in-out flex flex-col items-center text-center">
           {hoveredCard ? (
@@ -141,13 +149,18 @@ const App: React.FC = () => {
         </div>
       </footer>
 
-      {/* Detail View Modal */}
       <InfoModal 
         isOpen={modalOpen}
         onClose={closeModal}
         title={selectedCard?.title || ''}
         content={aiContent}
         isLoading={loading}
+      />
+
+      <SimulationLauncher 
+        isOpen={launcherOpen}
+        onClose={closeLauncher}
+        url={selectedCard?.externalUrl || ''}
       />
 
     </div>
