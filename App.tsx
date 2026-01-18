@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Card from './components/Card';
 import InfoModal from './components/InfoModal';
-import SimulationLauncher from './components/SimulationLauncher';
+import SimulationPortal from './components/SimulationPortal';
 import SmokeBackground from './components/SmokeBackground';
 import { CardData } from './types';
 import { generateCreativeDescription } from './services/geminiService';
@@ -30,7 +30,7 @@ const CARDS: CardData[] = [
     src: 'https://lh3.googleusercontent.com/d/1RbWNolLohmr4dX9FzSdzGLHNWPCWppob',
     promptContext: 'aerial view of mountains, clear blue sky, visual flight rules, freedom of flight, scenic landscape, aviation navigation',
     description: 'The pure freedom of visual flight. Soaring over breathtaking landscapes with the horizon as your primary guide.',
-    externalUrl: 'https://www.geo-fs.com/geofs.php?v=3.9'
+    externalUrl: 'https://www.geo-fs.com/geofs.php'
   },
   {
     id: '4',
@@ -44,7 +44,7 @@ const CARDS: CardData[] = [
 
 const App: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [launcherOpen, setLauncherOpen] = useState(false);
+  const [portalOpen, setPortalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
   const [hoveredCard, setHoveredCard] = useState<CardData | null>(null);
   const [aiContent, setAiContent] = useState<string>('');
@@ -53,9 +53,9 @@ const App: React.FC = () => {
   const handleCardClick = async (card: CardData) => {
     setSelectedCard(card);
     
-    // Special handling for VFR card to bypass iframe blocks and open in a "chromeless" window
+    // Embed the VFR planning directly into the app portal
     if (card.id === '3' && card.externalUrl) {
-      setLauncherOpen(true);
+      setPortalOpen(true);
       return;
     }
 
@@ -73,8 +73,8 @@ const App: React.FC = () => {
     setTimeout(() => setSelectedCard(null), 300);
   };
 
-  const closeLauncher = () => {
-    setLauncherOpen(false);
+  const closePortal = () => {
+    setPortalOpen(false);
     setTimeout(() => setSelectedCard(null), 300);
   };
 
@@ -157,11 +157,14 @@ const App: React.FC = () => {
         isLoading={loading}
       />
 
-      <SimulationLauncher 
-        isOpen={launcherOpen}
-        onClose={closeLauncher}
-        url={selectedCard?.externalUrl || ''}
-      />
+      {portalOpen && selectedCard?.externalUrl && (
+        <SimulationPortal 
+          isOpen={portalOpen}
+          onClose={closePortal}
+          url={selectedCard.externalUrl}
+          title={selectedCard.title}
+        />
+      )}
 
     </div>
   );
