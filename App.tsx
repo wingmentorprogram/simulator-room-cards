@@ -5,41 +5,38 @@ import SmokeBackground from './components/SmokeBackground';
 import { CardData } from './types';
 import { generateCreativeDescription } from './services/geminiService';
 
-// Aviation themed data
+// Aviation themed data with specific image replacements
 const CARDS: CardData[] = [
   {
     id: '1',
     title: 'IFR Procedures & Charts',
     type: 'image',
-    // Reliable cockpit image
-    src: 'https://images.unsplash.com/photo-1483304528321-0674f0040030?q=80&w=800&auto=format&fit=crop',
-    promptContext: 'cockpit flight instruments, IFR charts, navigation, aviation precision, night flight',
-    description: 'Mastering the unseen paths of the sky. Precision navigation through clouds and darkness using advanced instrumentation.',
+    src: 'https://lh3.googleusercontent.com/d/1N9ZtcYg4xJai_dtg-Nk3IxsoiBoOSwFI',
+    promptContext: 'cockpit flight instruments, IFR charts, navigation, aviation precision, night flight, digital flight deck',
+    description: 'Mastering the unseen paths of the sky. Precision navigation through clouds and darkness using advanced instrumentation and digital charts.',
   },
   {
     id: '2',
     title: 'Check Ride Interview Preparation',
     type: 'image',
-    // Professional aviator image
-    src: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&q=80&w=800', 
+    src: 'https://lh3.googleusercontent.com/d/1BPZ7HTU_Oxu3eCi_4P-8mimtjDmsmjeU', 
     promptContext: 'pilot pre-flight inspection, aviation interview, confident aviator, airline pilot uniform, professionalism',
     description: 'The culmination of training and discipline. Preparing to demonstrate the knowledge, skill, and poise of a professional aviator.',
   },
   {
     id: '3',
-    title: 'VFR and Cross Country XC Planning Simulation',
+    title: 'VFR and Cross Country Planning',
     type: 'image',
-    // Updated to a reliable scenic aerial view (Mountains)
-    src: 'https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=800&auto=format&fit=crop',
-    promptContext: 'aerial view of mountains, clear blue sky, visual flight rules, freedom of flight, scenic landscape',
+    src: 'https://lh3.googleusercontent.com/d/1RbWNolLohmr4dX9FzSdzGLHNWPCWppob',
+    promptContext: 'aerial view of mountains, clear blue sky, visual flight rules, freedom of flight, scenic landscape, aviation navigation',
     description: 'The pure freedom of visual flight. Soaring over breathtaking landscapes with the horizon as your primary guide.',
   },
   {
     id: '4',
-    title: 'EBT Workload Management Simulator',
+    title: 'EBT Workload Management',
     type: 'image',
-    // Complex cockpit/simulator
-    src: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
+    // Updated with the user-provided image link
+    src: 'https://lh3.googleusercontent.com/d/1QrldYBuGagHp8vRLsJ8EcNpwtwBW2ShL',
     promptContext: 'flight simulator cockpit, crew resource management, high workload aviation, complex scenario, pilot teamwork',
     description: 'Advanced scenario-based training. Enhancing resilience and decision-making through complex, evidence-based simulation.',
   },
@@ -56,7 +53,7 @@ const App: React.FC = () => {
     setSelectedCard(card);
     setModalOpen(true);
     setLoading(true);
-    setAiContent(''); // Reset content
+    setAiContent('');
 
     const description = await generateCreativeDescription(card.promptContext);
     setAiContent(description);
@@ -65,91 +62,86 @@ const App: React.FC = () => {
 
   const closeModal = () => {
     setModalOpen(false);
-    // slight delay to clear state after animation
     setTimeout(() => setSelectedCard(null), 300);
   };
 
-  // Calculate rotation for 3D effect
   const getTransformStyle = (index: number) => {
     const total = CARDS.length;
     const mid = (total - 1) / 2;
     const offset = index - mid;
     
-    // Inward Curve (Concave Screen Effect)
-    const rotateY = offset * -8; 
-    
-    // Z-Depth: 
-    // In a concave screen, the edges are closer to the viewer (positive Z) than the center.
-    const translateZ = Math.abs(offset) * 30; 
-    
-    // X-Translation: 
-    // Spread them out horizontally relative to center
-    const translateX = offset * 310;
+    // Concave 3D fan layout
+    const rotateY = offset * -10; 
+    const translateZ = Math.abs(offset) * 40; 
+    const translateX = offset * 320;
 
     return {
-      transform: `perspective(1000px) translate3d(${translateX}px, 0, ${translateZ}px) rotateY(${rotateY}deg)`,
-      zIndex: 10 - Math.floor(Math.abs(offset)), // Ensure center is on top if overlap
+      transform: `perspective(1200px) translate3d(${translateX}px, 0, ${translateZ}px) rotateY(${rotateY}deg)`,
+      zIndex: 10 - Math.floor(Math.abs(offset)),
     };
   };
 
   return (
-    <div className="h-screen bg-black text-white flex flex-col items-center overflow-hidden relative">
+    <div className="h-screen bg-black text-white flex flex-col items-center overflow-hidden relative font-sans">
       
-      {/* Smoke Shader Background */}
       <SmokeBackground />
 
-      {/* Header */}
-      <header className="relative z-30 pt-8 pb-4 w-full text-center shrink-0">
-        <h1 className="text-3xl md:text-5xl font-serif tracking-tight text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+      {/* Header Section */}
+      <header className="relative z-30 pt-10 pb-4 w-full text-center shrink-0">
+        <h1 className="text-4xl md:text-6xl font-serif font-bold tracking-tighter text-white drop-shadow-[0_4px_12px_rgba(0,0,0,1)]">
           The Simulator Room
         </h1>
-        <p className="mt-2 text-zinc-400 text-sm tracking-widest uppercase drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
-          WingMentor Simulator Modules
-        </p>
+        <div className="mt-4 flex items-center justify-center gap-4">
+          <div className="h-[1px] w-12 bg-white/20" />
+          <p className="text-zinc-400 text-[10px] md:text-xs tracking-[0.4em] uppercase font-semibold">
+            WingMentor Flight Modules
+          </p>
+          <div className="h-[1px] w-12 bg-white/20" />
+        </div>
       </header>
 
-      {/* Main Display Area */}
-      <main className="relative z-10 flex-1 w-full flex items-center justify-center perspective-[2000px]">
-        {CARDS.map((card, index) => (
-          <div 
-            key={card.id}
-            // Adjusted -mt to -240px to shift cards up slightly, allowing space for text below
-            className="absolute transition-all duration-700 ease-out preserve-3d top-1/2 left-1/2 -ml-[140px] -mt-[240px]" 
-            style={getTransformStyle(index)}
-          >
-            <Card 
-              data={card} 
-              index={index} 
-              onClick={handleCardClick}
-              onHover={setHoveredCard}
-            />
-          </div>
-        ))}
+      {/* Interactive Cards Display */}
+      <main className="relative z-10 flex-1 w-full flex items-center justify-center perspective-[2500px]">
+        <div className="relative w-full h-full flex items-center justify-center">
+          {CARDS.map((card, index) => (
+            <div 
+              key={card.id}
+              className="absolute transition-all duration-1000 ease-out preserve-3d top-1/2 left-1/2 -ml-[140px] -mt-[260px]" 
+              style={getTransformStyle(index)}
+            >
+              <Card 
+                data={card} 
+                index={index} 
+                onClick={handleCardClick}
+                onHover={setHoveredCard}
+              />
+            </div>
+          ))}
+        </div>
       </main>
 
-      {/* Description Footer */}
-      <footer className="relative z-20 h-[20vh] min-h-[140px] w-full shrink-0 pointer-events-none flex flex-col justify-center items-center pb-8 transition-all duration-500">
-        {hoveredCard ? (
-          <div className="animate-slide-up flex flex-col items-center text-center px-4 max-w-2xl">
-            <h2 className="text-2xl font-serif tracking-[0.15em] uppercase font-medium text-white drop-shadow-lg mb-3">
-              {hoveredCard.title}
-            </h2>
-            <div className="w-12 h-[1px] bg-white/40 mb-3" />
-            <p className="text-zinc-300 text-sm md:text-base font-light leading-relaxed drop-shadow-md max-w-lg">
-              {hoveredCard.description}
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center opacity-40">
-            <div className="w-1 h-8 bg-zinc-700 mb-4 rounded-full" />
-            <p className="text-zinc-500 text-[10px] tracking-[0.3em] uppercase transition-opacity duration-500">
-              Select a module to explore
-            </p>
-          </div>
-        )}
+      {/* Dynamic Status/Instruction Footer */}
+      <footer className="relative z-20 h-[18vh] min-h-[120px] w-full shrink-0 flex flex-col justify-center items-center pb-10">
+        <div className="transition-all duration-700 ease-in-out flex flex-col items-center text-center">
+          {hoveredCard ? (
+            <div className="animate-slide-up flex flex-col items-center">
+              <div className="h-1 w-20 bg-white/60 mb-6 rounded-full blur-[1px]" />
+              <p className="text-white text-sm md:text-base font-light italic leading-relaxed max-w-xl px-6 opacity-90 drop-shadow-md">
+                "{hoveredCard.description}"
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center animate-fade-in">
+              <div className="w-1 h-12 bg-gradient-to-b from-white/40 to-transparent mb-4 rounded-full" />
+              <p className="text-zinc-500 text-[9px] tracking-[0.5em] uppercase font-bold">
+                Engage a system to initialize simulation
+              </p>
+            </div>
+          )}
+        </div>
       </footer>
 
-      {/* Modal */}
+      {/* Detail View Modal */}
       <InfoModal 
         isOpen={modalOpen}
         onClose={closeModal}
